@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Iris Flower Classification</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #102a43, #334e68);
+            color: #ffffff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 35px;
+            border-radius: 18px;
+            background: #1d2939;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #bdcddd;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #50647b;
+            border-radius: 8px;
+            background: #101827;
+            color: white;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: 2px solid #5eead4;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 9px;
+            background: #5eead4;
+            color: #102331;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #99f6e4;
+        }
+
+        .result, .error {
+            margin-top: 25px;
+            padding: 18px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .result {
+            background: #164e3b;
+            border: 1px solid #34d399;
+            color: #d1fae5;
+        }
+
+        .result h2 {
+            font-size: 17px;
+        }
+
+        .result p {
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .error {
+            background: #57252e;
+            color: #ffe4e6;
+        }
+
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 12px;
+            color: #a9bacb;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>Iris Flower Classification</h1>
+
+        <p class="subtitle">
+            Non-Linear SVM Classification using RBF Kernel
+        </p>
+
+        <form method="POST">
+            <div class="form-grid">
+
+                <div>
+                    <label for="sepal_length">
+                        Sepal Length (cm)
+                    </label>
+                    <input type="number" step="any"
+                           id="sepal_length" name="sepal_length"
+                           placeholder="e.g. 5.1"
+                           value="{{ values.sepal_length }}"
+                           required>
+                </div>
+
+                <div>
+                    <label for="sepal_width">
+                        Sepal Width (cm)
+                    </label>
+                    <input type="number" step="any"
+                           id="sepal_width" name="sepal_width"
+                           placeholder="e.g. 3.5"
+                           value="{{ values.sepal_width }}"
+                           required>
+                </div>
+
+                <div>
+                    <label for="petal_length">
+                        Petal Length (cm)
+                    </label>
+                    <input type="number" step="any"
+                           id="petal_length" name="petal_length"
+                           placeholder="e.g. 1.4"
+                           value="{{ values.petal_length }}"
+                           required>
+                </div>
+
+                <div>
+                    <label for="petal_width">
+                        Petal Width (cm)
+                    </label>
+                    <input type="number" step="any"
+                           id="petal_width" name="petal_width"
+                           placeholder="e.g. 0.2"
+                           value="{{ values.petal_width }}"
+                           required>
+                </div>
+
+            </div>
+
+            <button type="submit">
+                Predict Flower Species
+            </button>
+        </form>
+
+        {% if prediction %}
+            <div class="result">
+                <h2>Prediction Result</h2>
+                <p>{{ prediction }}</p>
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="error" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <p class="footer">
+            Powered by Python, Flask and Non-Linear SVM
+        </p>
+
+    </div>
+</body>
+</html>

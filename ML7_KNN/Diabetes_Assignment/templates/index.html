@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KNN Diabetes Classification</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #333;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1769aa;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .instruction {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            background: #eaf3fb;
+            color: #1769aa;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .section-note {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 12px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1769aa;
+        }
+
+        input::placeholder {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .button-area {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background: #1769aa;
+            color: white;
+            border: none;
+            padding: 13px 35px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d568d;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            text-align: center;
+            background: #e8f7ed;
+            color: #218838;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .probability {
+            margin-top: 10px;
+            padding: 12px;
+            text-align: center;
+            background: #eef5ff;
+            color: #1769aa;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            color: #777;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        @media(max-width: 700px) {
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>KNN Diabetes Classification</h1>
+
+        <div class="subtitle">
+            Classification using K-Nearest Neighbors
+        </div>
+
+        <div class="instruction">
+            Enter the patient's 8 medical details below.
+        </div>
+
+
+        <form action="/predict" method="POST">
+
+
+            <!-- ================================================= -->
+            <!-- PATIENT FEATURES -->
+            <!-- ================================================= -->
+
+            <div class="section-title">
+                Patient Medical Features
+            </div>
+
+            <div class="section-note">
+                Enter numerical values for all the features used by the KNN classifier.
+            </div>
+
+            <div class="input-grid">
+
+
+                <!-- Pregnancies -->
+
+                <div class="input-group">
+
+                    <label>Pregnancies</label>
+
+                    <input type="number"
+                           step="any"
+                           name="pregnancies"
+                           placeholder="Example: 2"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <!-- Glucose -->
+
+                <div class="input-group">
+
+                    <label>Glucose</label>
+
+                    <input type="number"
+                           step="any"
+                           name="glucose"
+                           placeholder="Example: 130"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <!-- Blood Pressure -->
+
+                <div class="input-group">
+
+                    <label>Blood Pressure</label>
+
+                    <input type="number"
+                           step="any"
+                           name="blood_pressure"
+                           placeholder="Example: 70"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <!-- Skin Thickness -->
+
+                <div class="input-group">
+
+                    <label>Skin Thickness</label>
+
+                    <input type="number"
+                           step="any"
+                           name="skin_thickness"
+                           placeholder="Example: 25"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <!-- Insulin -->
+
+                <div class="input-group">
+
+                    <label>Insulin</label>
+
+                    <input type="number"
+                           step="any"
+                           name="insulin"
+                           placeholder="Example: 100"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <!-- BMI -->
+
+                <div class="input-group">
+
+                    <label>BMI</label>
+
+                    <input type="number"
+                           step="any"
+                           name="bmi"
+                           placeholder="Example: 31.5"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <!-- Diabetes Pedigree Function -->
+
+                <div class="input-group">
+
+                    <label>Diabetes Pedigree Function</label>
+
+                    <input type="number"
+                           step="any"
+                           name="diabetes_pedigree"
+                           placeholder="Example: 0.45"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <!-- Age -->
+
+                <div class="input-group">
+
+                    <label>Age</label>
+
+                    <input type="number"
+                           step="any"
+                           name="age"
+                           placeholder="Example: 35"
+                           min="0"
+                           required>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- PREDICT BUTTON -->
+            <!-- ================================================= -->
+
+            <div class="button-area">
+
+                <button type="submit">
+                    Predict
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+        <!-- ================================================= -->
+        <!-- RESULT -->
+        <!-- ================================================= -->
+
+        {% if prediction_text %}
+
+        <div class="result">
+            {{ prediction_text }}
+        </div>
+
+        {% endif %}
+
+
+        {% if probability %}
+
+        <div class="probability">
+            {{ probability }}
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+
+    <div class="footer">
+
+        K-Nearest Neighbors Classifier |
+        Pima Indians Diabetes Dataset
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Diabetes Prediction System</title>
+
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px 15px;
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            color: #243247;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 28px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #155e75;
+            margin-top: 0;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 7px;
+            background: #0e7490;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #155e75;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 8px;
+            background: #ecfeff;
+            border: 1px solid #a5f3fc;
+            overflow-wrap: anywhere;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 12px;
+            color: #991b1b;
+            background: #fee2e2;
+            border-radius: 7px;
+        }
+
+        .note {
+            margin-top: 22px;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 500px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>Diabetes Prediction</h1>
+
+        <p class="subtitle">
+            Decision Tree and Random Forest Machine Learning Project
+        </p>
+
+        <form action="/predict" method="POST">
+            <div class="form-grid">
+
+                <div>
+                    <label for="Pregnancies">Pregnancies</label>
+                    <input type="number"
+                           id="Pregnancies"
+                           name="Pregnancies"
+                           min="0" max="20"
+                           value="1" required>
+                </div>
+
+                <div>
+                    <label for="Glucose">Glucose</label>
+                    <input type="number"
+                           id="Glucose"
+                           name="Glucose"
+                           min="0" max="300"
+                           step="any" value="120" required>
+                </div>
+
+                <div>
+                    <label for="BloodPressure">Blood Pressure</label>
+                    <input type="number"
+                           id="BloodPressure"
+                           name="BloodPressure"
+                           min="0" max="200"
+                           step="any" value="70" required>
+                </div>
+
+                <div>
+                    <label for="SkinThickness">Skin Thickness</label>
+                    <input type="number"
+                           id="SkinThickness"
+                           name="SkinThickness"
+                           min="0" max="120"
+                           step="any" value="25" required>
+                </div>
+
+                <div>
+                    <label for="Insulin">Insulin</label>
+                    <input type="number"
+                           id="Insulin"
+                           name="Insulin"
+                           min="0" max="1000"
+                           step="any" value="80" required>
+                </div>
+
+                <div>
+                    <label for="BMI">BMI</label>
+                    <input type="number"
+                           id="BMI"
+                           name="BMI"
+                           min="0" max="100"
+                           step="any" value="28" required>
+                </div>
+
+                <div>
+                    <label for="DiabetesPedigreeFunction">
+                        Diabetes Pedigree Function
+                    </label>
+                    <input type="number"
+                           id="DiabetesPedigreeFunction"
+                           name="DiabetesPedigreeFunction"
+                           min="0" max="3"
+                           step="any" value="0.4" required>
+                </div>
+
+                <div>
+                    <label for="Age">Age</label>
+                    <input type="number"
+                           id="Age"
+                           name="Age"
+                           min="1" max="120"
+                           value="30" required>
+                </div>
+
+            </div>
+
+            <button type="submit">
+                Generate Predictions
+            </button>
+        </form>
+
+        {% if submitted %}
+        <div class="result">
+            <h2>Prediction Results</h2>
+
+            <p>
+                <strong>Classification:</strong>
+                {{ result }}
+            </p>
+
+            <p>
+                <strong>Model-estimated probability of class 1:</strong>
+                {{ probability }}
+            </p>
+
+            <p>
+                <strong>Estimated glucose level:</strong>
+                {{ glucose_estimate }} mg/dL
+            </p>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <p class="note">
+            Educational demonstration only. This application is not a
+            medical diagnostic tool. Predictions must not be used to make
+            health decisions. The displayed probability is a model output,
+            not a clinically validated personal risk estimate.
+        </p>
+
+    </div>
+</body>
+</html>
