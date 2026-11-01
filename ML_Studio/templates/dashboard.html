@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | ML Studio - Interactive Machine Learning Algorithms Lab{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">ML STUDIO</h1>
+    <p class="page-subtitle">Interactive Machine Learning Algorithms Lab — A centralized academic testbed for supervised learning algorithms</p>
+</div>
+
+<!-- 4 Overview Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>Total Algorithms</p>
+            <h3>10</h3>
+        </div>
+        <div class="stat-icon primary">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>Regression Models</p>
+            <h3>2</h3>
+        </div>
+        <div class="stat-icon amber">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>Classification Models</p>
+            <h3>8</h3>
+        </div>
+        <div class="stat-icon success">
+            <i class="fa-solid fa-shapes"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>ML Categories</p>
+            <h3>2</h3>
+        </div>
+        <div class="stat-icon purple">
+            <i class="fa-solid fa-diagram-project"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Algorithms Section Anchor -->
+<div id="algorithms-section" style="padding-top: 0.5rem;">
+    <!-- Filter and Search Bar -->
+    <div class="filter-bar">
+        <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchAlgo" class="search-input" placeholder="Search algorithms by name, task, or concept...">
+        </div>
+
+        <div class="category-tabs">
+            <button class="tab-btn active" data-filter="all">All Algorithms</button>
+            <button class="tab-btn" data-filter="regression">Regression (2)</button>
+            <button class="tab-btn" data-filter="classification">Classification (8)</button>
+        </div>
+    </div>
+
+    <!-- Algorithm Cards Grid -->
+    <div class="algorithms-grid">
+        <!-- 01: Simple Linear Regression -->
+        <div class="algo-card" data-name="Simple Linear Regression Student Package Predictor" data-category="regression" data-desc="Models the direct linear relationship between student CGPA and placement package in LPA.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 01</span>
+                    <div class="algo-icon"><i class="fa-solid fa-chart-simple"></i></div>
+                </div>
+                <h3>Simple Linear Regression</h3>
+                <span class="category-tag regression">Regression</span>
+                <p class="algo-desc">Student Package Predictor — Fits an optimal least-squares straight line (y = mx + c) modeling the single dependency of placement package on CGPA.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">1 Feature • Continuous Target</span>
+                <a href="{{ url_for('exp_slr') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 02: Multiple Linear Regression -->
+        <div class="algo-card" data-name="Multiple Linear Regression Student Package Prediction System" data-category="regression" data-desc="Predicts expected package based on multi-variate features including CGPA and IQ Score.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 02</span>
+                    <div class="algo-icon"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+                </div>
+                <h3>Multiple Linear Regression</h3>
+                <span class="category-tag regression">Regression</span>
+                <p class="algo-desc">Student Package Prediction System — Fits a multi-dimensional linear hyperplane over independent regressors (CGPA and IQ) to forecast salary.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">2 Features • Continuous Target</span>
+                <a href="{{ url_for('exp_mlr') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 03: Binary Logistic Regression -->
+        <div class="algo-card" data-name="Binary Logistic Regression Student Placement Prediction" data-category="classification" data-desc="Predicts binary placement status (Placed / Not Placed) using sigmoid activation and probabilities.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 03</span>
+                    <div class="algo-icon"><i class="fa-solid fa-toggle-on"></i></div>
+                </div>
+                <h3>Binary Logistic Regression</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">Student Placement Prediction — Applies the Sigmoid logit function to compute class probability and classifies candidates into Placed vs Not Placed.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">2 Features • 2 Classes</span>
+                <a href="{{ url_for('exp_logistic_binary') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 04: Multiclass Logistic Regression -->
+        <div class="algo-card" data-name="Multiclass Logistic Regression Student Performance Category Predictor" data-category="classification" data-desc="Categorizes students into Low, Average, or High Performance using multinomial Softmax probability.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 04</span>
+                    <div class="algo-icon"><i class="fa-solid fa-layer-group"></i></div>
+                </div>
+                <h3>Multiclass Logistic Regression</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">Student Performance Category Predictor — Employs multinomial logistic loss and softmax normalization across three tiered student academic tiers.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">2 Features • 3 Classes</span>
+                <a href="{{ url_for('exp_logistic_multiclass') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 05: Decision Tree -->
+        <div class="algo-card" data-name="Decision Tree Classification System Gini Entropy" data-category="classification" data-desc="Supervised tree-based hierarchical splits optimizing Gini impurity or Information Gain.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 05</span>
+                    <div class="algo-icon"><i class="fa-solid fa-network-wired"></i></div>
+                </div>
+                <h3>Decision Tree Classifier</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">Decision Tree Classification System — Constructs explicit decision nodes and leaves with full visual tree inspection and feature importance analysis.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">3 Features • Tree Visualizer</span>
+                <a href="{{ url_for('exp_decision_tree') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 06: K-Nearest Neighbors -->
+        <div class="algo-card" data-name="KNN K-Nearest Neighbors Prediction System Distance Metrics" data-category="classification" data-desc="Instance-based learning utilizing Euclidean, Manhattan, or Minkowski distance metrics with interactive K-tuning.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 06</span>
+                    <div class="algo-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+                </div>
+                <h3>K-Nearest Neighbors (KNN)</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">KNN Prediction System — Performs lazy distance-weighted voting across multidimensional feature space with dynamic K parameter exploration.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">Adjustable K • Distance Metrics</span>
+                <a href="{{ url_for('exp_knn') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 07: Naive Bayes -->
+        <div class="algo-card" data-name="Gaussian Naive Bayes Classification System Prior Posterior" data-category="classification" data-desc="Bayesian probabilistic classifier with Gaussian conditional likelihood assumption.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 07</span>
+                    <div class="algo-icon"><i class="fa-solid fa-square-root-variable"></i></div>
+                </div>
+                <h3>Naive Bayes Classifier</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">Naive Bayes Classification System — Generates class posterior probabilities via Bayes' theorem assuming conditional attribute independence.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">GaussianNB • Class Priors</span>
+                <a href="{{ url_for('exp_naive_bayes') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 08: Linear SVM -->
+        <div class="algo-card" data-name="Linear Support Vector Machine Maximum Margin Hyperplane" data-category="classification" data-desc="Constructs an optimal linear hyperplane maximizing margin width with support vector identification.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 08</span>
+                    <div class="algo-icon"><i class="fa-solid fa-arrows-left-right-to-line"></i></div>
+                </div>
+                <h3>Linear SVM</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">Linear Support Vector Machine — Solves convex quadratic programming to establish maximum margin separating planes with adjustable regularization parameter C.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">Adjustable C • Support Vectors</span>
+                <a href="{{ url_for('exp_linear_svm') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 09: Non-Linear SVM -->
+        <div class="algo-card" data-name="Non-Linear Support Vector Machine Kernel RBF Polynomial" data-category="classification" data-desc="Projects non-linear data into higher dimensional space with RBF and Polynomial kernels.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 09</span>
+                    <div class="algo-icon"><i class="fa-solid fa-wave-square"></i></div>
+                </div>
+                <h3>Non-Linear SVM</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">Non-Linear Support Vector Machine — Implements the Kernel Trick (Radial Basis Function & Polynomial) to isolate non-linear decision boundaries.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">RBF / Poly • C & Gamma Tuning</span>
+                <a href="{{ url_for('exp_nonlinear_svm') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 10: Random Forest -->
+        <div class="algo-card" data-name="Random Forest Classification System Ensemble Bagging Trees" data-category="classification" data-desc="Ensemble bagging of bootstrap-aggregated decision trees with out-of-bag validation.">
+            <div>
+                <div class="algo-card-top">
+                    <span class="algo-badge-number">ALGORITHM 10</span>
+                    <div class="algo-icon"><i class="fa-solid fa-tree"></i></div>
+                </div>
+                <h3>Random Forest Classifier</h3>
+                <span class="category-tag classification">Classification</span>
+                <p class="algo-desc">Random Forest Classification System — Combines multiple randomized decision trees with adjustable ensemble size (n_estimators) and tree depth limits.</p>
+            </div>
+            <div class="algo-footer">
+                <span class="algo-specs">Ensemble • Trees & Depth Control</span>
+                <a href="{{ url_for('exp_random_forest') }}" class="btn-academic btn-primary-academic">
+                    <span>Open Experiment</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Experiments Section (SQLite) -->
+<div class="card-academic" style="margin-top: 1.5rem;">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> Recent Experiment History</h3>
+        {% if recent_experiments %}
+        <form action="{{ url_for('clear_experiment_history') }}" method="POST" style="margin: 0;" onsubmit="return confirm('Clear all experiment history?');">
+            <button type="submit" class="btn-academic btn-danger-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                <i class="fa-regular fa-trash-can"></i> Clear History
+            </button>
+        </form>
+        {% endif %}
+    </div>
+    <div class="card-body-academic" style="padding: 0;">
+        {% if recent_experiments %}
+        <div style="overflow-x: auto;">
+            <table class="table-academic">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Algorithm</th>
+                        <th>Category</th>
+                        <th>Input Features</th>
+                        <th>Model Prediction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exp in recent_experiments %}
+                    <tr>
+                        <td style="color: var(--slate-500); font-size: 0.78rem;">{{ exp.timestamp }}</td>
+                        <td style="font-weight: 600; color: var(--navy-900);">{{ exp.algorithm_name }}</td>
+                        <td>
+                            <span class="category-tag {% if exp.category == 'Regression' %}regression{% else %}classification{% endif %}" style="margin: 0;">
+                                {{ exp.category }}
+                            </span>
+                        </td>
+                        <td style="font-family: monospace; font-size: 0.82rem;">
+                            {% for k, v in exp.inputs.items() %}
+                                <span style="background: var(--slate-100); padding: 0.15rem 0.35rem; border-radius: 3px; margin-right: 0.25rem;">{{ k }}: {{ v }}</span>
+                            {% endfor %}
+                        </td>
+                        <td style="font-weight: 700; color: var(--brand-blue);">{{ exp.prediction_result }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="padding: 2rem; text-align: center; color: var(--slate-500); font-size: 0.88rem;">
+            <i class="fa-solid fa-flask" style="font-size: 1.8rem; color: var(--slate-400); margin-bottom: 0.5rem; display: block;"></i>
+            No experiment runs logged yet. Open any algorithm above and run a prediction to log your results!
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

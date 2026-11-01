@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Model Performance Matrix | ML Studio{% endblock %}
+{% block breadcrumb %}Model Performance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Model Performance & Empirical Comparison</h1>
+    <p class="page-subtitle">Standardized evaluation metrics derived from real Scikit-learn test partition evaluations across all 10 algorithms.</p>
+</div>
+
+<!-- SECTION 1: REGRESSION ALGORITHMS COMPARISON -->
+<div class="card-academic" style="margin-bottom: 2rem;">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-chart-line me-2 text-primary"></i> 1. Regression Models Performance (Continuous Targets)</h3>
+        <span class="category-tag regression" style="margin: 0;">2 Algorithms</span>
+    </div>
+    <div class="card-body-academic">
+        <!-- Regression Metrics Table -->
+        <div style="overflow-x: auto; margin-bottom: 1.5rem;">
+            <table class="table-academic">
+                <thead>
+                    <tr>
+                        <th>Algorithm Name</th>
+                        <th>Dataset</th>
+                        <th>Features (X)</th>
+                        <th>R² Score (Variance Explained)</th>
+                        <th>MAE (LPA)</th>
+                        <th>MSE</th>
+                        <th>RMSE (LPA)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in regression_models %}
+                    <tr>
+                        <td style="font-weight: 700; color: var(--navy-900);">{{ m.name }}</td>
+                        <td><code>{{ m.dataset }}</code></td>
+                        <td>{{ m.features }}</td>
+                        <td style="font-weight: 700; color: var(--brand-blue);">{{ m.metrics.r2_score }}</td>
+                        <td>{{ m.metrics.mae }}</td>
+                        <td>{{ m.metrics.mse }}</td>
+                        <td>{{ m.metrics.rmse }}</td>
+                        <td>
+                            <a href="{{ m.link }}" class="btn-academic btn-outline-academic" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                                Open Lab
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Regression Visual Chart -->
+        <div>
+            <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--navy-800); margin-bottom: 0.6rem;">
+                Regression Performance Comparison: R² Score & Error Metrics
+            </h4>
+            <div style="max-height: 320px; position: relative;">
+                <canvas id="regressionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 2: CLASSIFICATION ALGORITHMS COMPARISON -->
+<div class="card-academic">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-shapes me-2 text-primary"></i> 2. Classification Models Performance (Discrete Targets)</h3>
+        <span class="category-tag classification" style="margin: 0;">8 Algorithms</span>
+    </div>
+    <div class="card-body-academic">
+        <!-- Classification Metrics Table -->
+        <div style="overflow-x: auto; margin-bottom: 1.5rem;">
+            <table class="table-academic">
+                <thead>
+                    <tr>
+                        <th>Algorithm Name</th>
+                        <th>Dataset</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-Score</th>
+                        <th>Key Hyperparameters</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in classification_models %}
+                    <tr>
+                        <td style="font-weight: 700; color: var(--navy-900);">{{ m.name }}</td>
+                        <td><code>{{ m.dataset }}</code></td>
+                        <td style="font-weight: 700; color: var(--brand-blue);">{{ (m.metrics.accuracy * 100)|round(1) }}%</td>
+                        <td>{{ (m.metrics.precision * 100)|round(1) }}%</td>
+                        <td>{{ (m.metrics.recall * 100)|round(1) }}%</td>
+                        <td style="font-weight: 600;">{{ m.metrics.f1_score }}</td>
+                        <td style="font-size: 0.78rem; color: var(--slate-600);">{{ m.notes }}</td>
+                        <td>
+                            <a href="{{ m.link }}" class="btn-academic btn-outline-academic" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                                Open Lab
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Classification Visual Comparison Chart -->
+        <div>
+            <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--navy-800); margin-bottom: 0.6rem;">
+                Classification Models Comparative Matrix (Accuracy, Precision, Recall, F1)
+            </h4>
+            <div style="max-height: 420px; position: relative;">
+                <canvas id="classificationChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. Regression Chart (R² & MAE)
+    const regCtx = document.getElementById('regressionChart').getContext('2d');
+    const regressionChart = new Chart(regCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ reg_labels|tojson }},
+            datasets: [
+                {
+                    label: 'R² Score (Variance Explained)',
+                    data: {{ reg_r2|tojson }},
+                    backgroundColor: '#2563eb',
+                    borderColor: '#1d4ed8',
+                    borderWidth: 1,
+                    borderRadius: 4
+                },
+                {
+                    label: 'MAE (Mean Absolute Error)',
+                    data: {{ reg_mae|tojson }},
+                    backgroundColor: '#d97706',
+                    borderColor: '#b45309',
+                    borderWidth: 1,
+                    borderRadius: 4
+                },
+                {
+                    label: 'RMSE (Root Mean Sq Error)',
+                    data: {{ reg_rmse|tojson }},
+                    backgroundColor: '#dc2626',
+                    borderColor: '#b91c1c',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#e2e8f0' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { font: { family: 'Segoe UI', size: 12, weight: 600 } }
+                }
+            }
+        }
+    });
+
+    // 2. Classification Models Grouped Comparison Chart
+    const clsCtx = document.getElementById('classificationChart').getContext('2d');
+    const classificationChart = new Chart(clsCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ cls_labels|tojson }},
+            datasets: [
+                {
+                    label: 'Accuracy (%)',
+                    data: {{ cls_acc|tojson }},
+                    backgroundColor: '#2563eb',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Precision (%)',
+                    data: {{ cls_prec|tojson }},
+                    backgroundColor: '#16a34a',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Recall (%)',
+                    data: {{ cls_rec|tojson }},
+                    backgroundColor: '#0284c7',
+                    borderRadius: 4
+                },
+                {
+                    label: 'F1-Score (×100)',
+                    data: {{ cls_f1|tojson }},
+                    backgroundColor: '#9333ea',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 105,
+                    title: { display: true, text: 'Percentage (%) / Normalized Metric' },
+                    grid: { color: '#e2e8f0' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10.5, weight: 600 } }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { font: { family: 'Segoe UI', size: 12, weight: 600 } }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

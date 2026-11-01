@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Multiple Linear Regression | ML Studio{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('dashboard') }}">Algorithms</a> / Multiple Linear Regression{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+            <span class="category-tag regression">Regression</span>
+            <span class="algo-badge-number">ALGORITHM 02</span>
+        </div>
+        <h1 class="page-title">Multiple Linear Regression: Student Package Prediction System</h1>
+        <p class="page-subtitle">Predicts annual package (₹ LPA) using multi-dimensional linear optimization across student CGPA and IQ Score.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('dashboard') }}" class="btn-academic btn-outline-academic">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="experiment-layout">
+    <!-- LEFT COLUMN: CONTROLS & INPUT FORM -->
+    <div>
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-sliders me-2 text-primary"></i> Input Parameters</h3>
+                <a href="{{ url_for('exp_mlr') }}" class="btn-academic btn-outline-academic" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </a>
+            </div>
+            <div class="card-body-academic">
+                <form id="mlrForm" action="{{ url_for('exp_mlr') }}" method="POST">
+                    <div class="form-group">
+                        <label for="cgpa" class="form-label">Student CGPA (0.0 – 10.0)</label>
+                        <input type="number" step="0.01" min="0" max="10" name="cgpa" id="cgpa" 
+                               class="form-control-academic" value="{{ query_cgpa or 8.50 }}" required>
+                        <div class="form-hint">Candidate's academic score.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="iq" class="form-label">IQ Score (50 – 180)</label>
+                        <input type="number" step="1" min="50" max="180" name="iq" id="iq" 
+                               class="form-control-academic" value="{{ query_iq or 115 }}" required>
+                        <div class="form-hint">Cognitive problem-solving aptitude rating.</div>
+                    </div>
+
+                    <!-- Preset Quick Test Buttons -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--slate-500); display: block; margin-bottom: 0.4rem;">
+                            Quick Presets:
+                        </span>
+                        <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="6.2" data-iq="95" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Moderate Profile</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="8.5" data-iq="118" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Above Average</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="9.6" data-iq="138" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Top Tier Profile</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-academic btn-primary-academic" style="width: 100%; padding: 0.65rem;">
+                        <i class="fa-solid fa-bolt"></i> Compute Package
+                    </button>
+                </form>
+
+                <!-- PREDICTION RESULT -->
+                {% if result %}
+                <div class="prediction-box">
+                    <div class="prediction-title">Expected Package</div>
+                    <div class="prediction-value" style="color: var(--brand-blue);">{{ result.prediction_formatted }}</div>
+                    <div class="prediction-meta">
+                        <strong>CGPA:</strong> {{ result.cgpa }} | <strong>IQ:</strong> {{ result.iq }}<br>
+                        <strong>Formula:</strong> <span style="word-break: break-all;">{{ result.calculation }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- MATHEMATICAL MODEL FORMULATION -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-square-root-variable me-2 text-primary"></i> Hyperplane Formulation</h3>
+            </div>
+            <div class="card-body-academic" style="font-size: 0.85rem; color: var(--slate-700);">
+                <p><strong>Fitted Multi-linear Equation:</strong></p>
+                <div style="background: var(--slate-100); padding: 0.6rem 0.8rem; border-radius: 4px; font-family: monospace; font-size: 0.8rem; font-weight: 600; color: var(--navy-900); margin-bottom: 0.75rem; word-break: break-all;">
+                    {{ details.equation }}
+                </div>
+                <table class="table-academic" style="margin-bottom: 0.75rem;">
+                    <thead>
+                        <tr><th>Regressors</th><th>Coefficients (&beta;)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>CGPA Weight (&beta;₁)</td><td style="font-weight: 700; color: var(--brand-blue);">{{ details.coefficients.CGPA }}</td></tr>
+                        <tr><td>IQ Score Weight (&beta;₂)</td><td style="font-weight: 700; color: var(--brand-blue);">{{ details.coefficients.IQ }}</td></tr>
+                        <tr><td>Intercept (&beta;₀)</td><td style="font-weight: 700;">{{ details.coefficients.Intercept }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: VISUALIZATIONS & PERFORMANCE METRICS -->
+    <div>
+        <!-- MODEL PERFORMANCE METRICS -->
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-line me-2 text-primary"></i> Model Performance (Scikit-learn Evaluation)</h3>
+                <span class="status-badge"><span class="status-dot"></span> Test Set Split: 20%</span>
+            </div>
+            <div class="card-body-academic">
+                <div class="metrics-row">
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">R² Score (Variance)</div>
+                        <div class="metric-pill-value" style="color: var(--brand-blue);">{{ details.metrics.r2_score }}</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Mean Absolute Error</div>
+                        <div class="metric-pill-value">{{ details.metrics.mae }} LPA</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Mean Squared Error</div>
+                        <div class="metric-pill-value">{{ details.metrics.mse }}</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Root Mean Sq Error</div>
+                        <div class="metric-pill-value">{{ details.metrics.rmse }} LPA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISUALIZATION SECTION -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-area me-2 text-primary"></i> Visualizations: Actual vs Predicted & Feature Impact</h3>
+            </div>
+            <div class="card-body-academic">
+                <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 1rem;">
+                    (Left) Actual vs Predicted package values on unseen test observations compared to identity line y=x. 
+                    (Right) Relative magnitude and directional coefficients (&beta;) for each explanatory variable.
+                </p>
+                <div class="plot-container">
+                    <img src="{{ result.plot if result else details.plot }}" alt="Multiple Linear Regression Diagnostic Plot">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

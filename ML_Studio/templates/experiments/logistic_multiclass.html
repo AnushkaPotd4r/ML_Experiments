@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Multiclass Logistic Regression | ML Studio{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('dashboard') }}">Algorithms</a> / Multiclass Logistic Regression{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+            <span class="category-tag classification">Classification</span>
+            <span class="algo-badge-number">ALGORITHM 04</span>
+        </div>
+        <h1 class="page-title">Multiclass Logistic Regression: Student Performance Category Predictor</h1>
+        <p class="page-subtitle">Categorizes students into Low, Average, or High Performance tiers using multinomial logistic regression and Softmax probability distribution.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('dashboard') }}" class="btn-academic btn-outline-academic">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="experiment-layout">
+    <!-- LEFT COLUMN: CONTROLS & INPUT FORM -->
+    <div>
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-sliders me-2 text-primary"></i> Input Parameters</h3>
+                <a href="{{ url_for('exp_logistic_multiclass') }}" class="btn-academic btn-outline-academic" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </a>
+            </div>
+            <div class="card-body-academic">
+                <form id="logMultiForm" action="{{ url_for('exp_logistic_multiclass') }}" method="POST">
+                    <div class="form-group">
+                        <label for="cgpa" class="form-label">Student CGPA (0.0 – 10.0)</label>
+                        <input type="number" step="0.01" min="0" max="10" name="cgpa" id="cgpa" 
+                               class="form-control-academic" value="{{ query_cgpa or 7.80 }}" required>
+                        <div class="form-hint">Academic grade point.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="iq" class="form-label">IQ Score (50 – 180)</label>
+                        <input type="number" step="1" min="50" max="180" name="iq" id="iq" 
+                               class="form-control-academic" value="{{ query_iq or 110 }}" required>
+                        <div class="form-hint">Cognitive test score.</div>
+                    </div>
+
+                    <!-- Preset Quick Test Buttons -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--slate-500); display: block; margin-bottom: 0.4rem;">
+                            Quick Presets:
+                        </span>
+                        <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="5.9" data-iq="88" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Low Tier</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="7.5" data-iq="110" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Average Tier</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="9.3" data-iq="135" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">High Tier</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-academic btn-primary-academic" style="width: 100%; padding: 0.65rem;">
+                        <i class="fa-solid fa-bolt"></i> Classify Performance
+                    </button>
+                </form>
+
+                <!-- PREDICTION RESULT -->
+                {% if result %}
+                <div class="prediction-box">
+                    <div class="prediction-title">Predicted Performance Tier</div>
+                    <div class="prediction-value" style="color: var(--brand-blue);">{{ result.prediction }}</div>
+                    <div class="prediction-meta" style="margin-top: 0.5rem;">
+                        <strong>Confidence:</strong> {{ result.confidence }}%<br>
+                        <div style="margin-top: 0.5rem;">
+                            {% for c, p in result.probabilities.items() %}
+                            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.2rem;">
+                                <span>{{ c }}</span>
+                                <strong>{{ p }}%</strong>
+                            </div>
+                            <div style="background: var(--slate-200); border-radius: 9999px; height: 6px; overflow: hidden; margin-bottom: 0.4rem;">
+                                <div style="width: {{ p }}%; height: 100%; background: var(--brand-blue);"></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- MATHEMATICAL PRINCIPLE -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-layer-group me-2 text-primary"></i> Multinomial Softmax</h3>
+            </div>
+            <div class="card-body-academic" style="font-size: 0.85rem; color: var(--slate-700);">
+                <p>Computes probabilities across <em>K</em> mutual classes using normalized exponential logits:</p>
+                <div style="background: var(--slate-100); padding: 0.5rem; text-align: center; border-radius: 4px; font-family: monospace; font-weight: 700; color: var(--navy-900); margin: 0.5rem 0;">
+                    P(Y=k | X) = e<sup>z_k</sup> / &Sigma;<sub>j=1</sub><sup>K</sup> e<sup>z_j</sup>
+                </div>
+                <p style="color: var(--slate-500); font-size: 0.78rem; margin: 0;">
+                    Guarantees &Sigma; P(Y=k) = 1.0, enabling continuous likelihood grading across all academic tiers.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: VISUALIZATIONS & PERFORMANCE METRICS -->
+    <div>
+        <!-- MODEL PERFORMANCE METRICS -->
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-line me-2 text-primary"></i> Model Performance & Classification Report</h3>
+                <span class="status-badge"><span class="status-dot"></span> Test Split: 20%</span>
+            </div>
+            <div class="card-body-academic">
+                <div class="metrics-row">
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Overall Accuracy</div>
+                        <div class="metric-pill-value" style="color: var(--brand-blue);">{{ (details.metrics.accuracy * 100)|round(1) }}%</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Weighted Precision</div>
+                        <div class="metric-pill-value">{{ (details.metrics.precision * 100)|round(1) }}%</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Weighted Recall</div>
+                        <div class="metric-pill-value">{{ (details.metrics.recall * 100)|round(1) }}%</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Weighted F1-Score</div>
+                        <div class="metric-pill-value">{{ details.metrics.f1_score }}</div>
+                    </div>
+                </div>
+
+                <!-- Classification Report Breakdown Table -->
+                <h4 style="font-size: 0.85rem; font-weight: 600; color: var(--navy-800); margin-top: 1rem; margin-bottom: 0.4rem;">Per-Category Classification Report</h4>
+                <div style="overflow-x: auto;">
+                    <table class="table-academic">
+                        <thead>
+                            <tr>
+                                <th>Class Category</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1-Score</th>
+                                <th>Support (N)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in details.classes %}
+                            {% set rep = details.metrics.classification_report[c] %}
+                            <tr>
+                                <td style="font-weight: 600;">{{ c }}</td>
+                                <td>{{ (rep.precision * 100)|round(1) }}%</td>
+                                <td>{{ (rep.recall * 100)|round(1) }}%</td>
+                                <td>{{ rep['f1-score']|round(3) }}</td>
+                                <td>{{ rep.support }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISUALIZATION SECTION -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-area me-2 text-primary"></i> Visualizations</h3>
+            </div>
+            <div class="card-body-academic">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1.25rem;">
+                    {% if result and result.prob_plot %}
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--navy-800); margin-bottom: 0.4rem;">Query Softmax Probability Distribution</h4>
+                        <div class="plot-container">
+                            <img src="{{ result.prob_plot }}" alt="Softmax Distribution Plot">
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--navy-800); margin-bottom: 0.4rem;">Multiclass Confusion Matrix Heatmap</h4>
+                        <div class="plot-container">
+                            <img src="{{ result.cm_plot if result else details.cm_plot }}" alt="Confusion Matrix Plot">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Naive Bayes Classifier | ML Studio{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('dashboard') }}">Algorithms</a> / Naive Bayes{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+            <span class="category-tag classification">Classification</span>
+            <span class="algo-badge-number">ALGORITHM 07</span>
+        </div>
+        <h1 class="page-title">Gaussian Naive Bayes: Classification System</h1>
+        <p class="page-subtitle">Applies Bayes' Theorem with Gaussian continuous likelihood assuming class-conditional feature independence.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('dashboard') }}" class="btn-academic btn-outline-academic">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="experiment-layout">
+    <!-- LEFT COLUMN: CONTROLS & INPUT FORM -->
+    <div>
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-sliders me-2 text-primary"></i> Feature Inputs</h3>
+                <a href="{{ url_for('exp_naive_bayes') }}" class="btn-academic btn-outline-academic" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </a>
+            </div>
+            <div class="card-body-academic">
+                <form id="nbForm" action="{{ url_for('exp_naive_bayes') }}" method="POST">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                        <div class="form-group">
+                            <label for="sepal_len" class="form-label">Sepal Length (cm)</label>
+                            <input type="number" step="0.1" min="1.0" max="10.0" name="sepal_len" id="sepal_len" 
+                                   class="form-control-academic" value="{{ query_sepal_len or 5.5 }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sepal_wid" class="form-label">Sepal Width (cm)</label>
+                            <input type="number" step="0.1" min="1.0" max="10.0" name="sepal_wid" id="sepal_wid" 
+                                   class="form-control-academic" value="{{ query_sepal_wid or 3.2 }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petal_len" class="form-label">Petal Length (cm)</label>
+                            <input type="number" step="0.1" min="0.5" max="10.0" name="petal_len" id="petal_len" 
+                                   class="form-control-academic" value="{{ query_petal_len or 3.8 }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petal_wid" class="form-label">Petal Width (cm)</label>
+                            <input type="number" step="0.1" min="0.1" max="10.0" name="petal_wid" id="petal_wid" 
+                                   class="form-control-academic" value="{{ query_petal_wid or 1.1 }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Preset Quick Test Buttons -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--slate-500); display: block; margin-bottom: 0.4rem;">
+                            Test Typical Iris Profiles:
+                        </span>
+                        <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" 
+                                    data-sepal_len="5.1" data-sepal_wid="3.5" data-petal_len="1.4" data-petal_wid="0.2" 
+                                    style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Setosa Sample</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" 
+                                    data-sepal_len="5.7" data-sepal_wid="2.8" data-petal_len="4.1" data-petal_wid="1.3" 
+                                    style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Versicolor Sample</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" 
+                                    data-sepal_len="6.5" data-sepal_wid="3.0" data-petal_len="5.5" data-petal_wid="2.0" 
+                                    style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Virginica Sample</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-academic btn-primary-academic" style="width: 100%; padding: 0.65rem;">
+                        <i class="fa-solid fa-bolt"></i> Classify with Naive Bayes
+                    </button>
+                </form>
+
+                <!-- PREDICTION RESULT -->
+                {% if result %}
+                <div class="prediction-box">
+                    <div class="prediction-title">Predicted Iris Class</div>
+                    <div class="prediction-value" style="color: var(--brand-blue);">{{ result.prediction }}</div>
+                    <div class="prediction-meta" style="margin-top: 0.5rem;">
+                        <div><strong>Posterior Confidence:</strong> {{ result.confidence }}%</div>
+                        <div style="margin-top: 0.5rem;">
+                            {% for c, p in result.probabilities.items() %}
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.2rem;">
+                                <span>{{ c }}</span>
+                                <strong>{{ p }}%</strong>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- MATHEMATICAL PRINCIPLE -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-square-root-variable me-2 text-primary"></i> Bayes' Theorem Formula</h3>
+            </div>
+            <div class="card-body-academic" style="font-size: 0.85rem; color: var(--slate-700);">
+                <p>The posterior probability is proportional to prior times Gaussian likelihood:</p>
+                <div style="background: var(--slate-100); padding: 0.5rem; text-align: center; border-radius: 4px; font-family: monospace; font-weight: 700; color: var(--navy-900); margin: 0.5rem 0;">
+                    P(C<sub>k</sub> | X) &prop; P(C<sub>k</sub>) &prod; P(x<sub>i</sub> | C<sub>k</sub>)
+                </div>
+                <p style="color: var(--slate-500); font-size: 0.78rem; margin: 0;">
+                    Gaussian likelihood assumes normal distribution: N(x; &mu;<sub>ik</sub>, &sigma;<sub>ik</sub>²).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: VISUALIZATIONS & PERFORMANCE METRICS -->
+    <div>
+        <!-- MODEL PERFORMANCE METRICS -->
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-line me-2 text-primary"></i> Model Performance (Scikit-learn Evaluation)</h3>
+                <span class="status-badge"><span class="status-dot"></span> Test Split: 25%</span>
+            </div>
+            <div class="card-body-academic">
+                <div class="metrics-row">
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Accuracy</div>
+                        <div class="metric-pill-value" style="color: var(--brand-blue);">{{ (details.metrics.accuracy * 100)|round(1) }}%</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Precision</div>
+                        <div class="metric-pill-value">{{ (details.metrics.precision * 100)|round(1) }}%</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Recall</div>
+                        <div class="metric-pill-value">{{ (details.metrics.recall * 100)|round(1) }}%</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">F1-Score</div>
+                        <div class="metric-pill-value">{{ details.metrics.f1_score }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISUALIZATION SECTION: CLASS PROBABILITIES & CONFUSION MATRIX -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-area me-2 text-primary"></i> Visualizations: Posterior Probabilities & Confusion Matrix</h3>
+            </div>
+            <div class="card-body-academic">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1.25rem;">
+                    {% if result and result.prob_plot %}
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--navy-800); margin-bottom: 0.4rem;">Query Posterior Probability Distribution</h4>
+                        <div class="plot-container">
+                            <img src="{{ result.prob_plot }}" alt="Posterior Probabilities Plot">
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--navy-800); margin-bottom: 0.4rem;">Confusion Matrix Heatmap</h4>
+                        <div class="plot-container">
+                            <img src="{{ result.cm_plot if result else details.cm_plot }}" alt="Confusion Matrix Plot">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

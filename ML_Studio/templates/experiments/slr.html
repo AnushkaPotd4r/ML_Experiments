@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Simple Linear Regression | ML Studio{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('dashboard') }}">Algorithms</a> / Simple Linear Regression{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+            <span class="category-tag regression">Regression</span>
+            <span class="algo-badge-number">ALGORITHM 01</span>
+        </div>
+        <h1 class="page-title">Simple Linear Regression: Student Package Predictor</h1>
+        <p class="page-subtitle">Models the relationship between a single independent regressor (Student CGPA) and expected annual package (₹ LPA).</p>
+    </div>
+    <div>
+        <a href="{{ url_for('dashboard') }}" class="btn-academic btn-outline-academic">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="experiment-layout">
+    <!-- LEFT COLUMN: CONTROLS & INPUT FORM -->
+    <div>
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-sliders me-2 text-primary"></i> Input Parameters</h3>
+                <a href="{{ url_for('exp_slr') }}" class="btn-academic btn-outline-academic" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </a>
+            </div>
+            <div class="card-body-academic">
+                <form id="slrForm" action="{{ url_for('exp_slr') }}" method="POST">
+                    <div class="form-group">
+                        <label for="cgpa" class="form-label">Student CGPA (0.0 – 10.0)</label>
+                        <input type="number" step="0.01" min="0" max="10" name="cgpa" id="cgpa" 
+                               class="form-control-academic" value="{{ query_cgpa or 8.20 }}" required>
+                        <div class="form-hint">Enter the student's cumulative grade point average.</div>
+                    </div>
+
+                    <!-- Preset Quick Test Buttons -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--slate-500); display: block; margin-bottom: 0.4rem;">
+                            Quick Preset Inputs:
+                        </span>
+                        <div style="display: flex; gap: 0.35rem;">
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="6.40" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">6.40 CGPA</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="8.25" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">8.25 CGPA</button>
+                            <button type="button" class="btn-academic btn-outline-academic btn-preset" data-cgpa="9.60" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">9.60 CGPA</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-academic btn-primary-academic" style="width: 100%; padding: 0.65rem;">
+                        <i class="fa-solid fa-bolt"></i> Generate Prediction
+                    </button>
+                </form>
+
+                <!-- PREDICTION RESULT -->
+                {% if result %}
+                <div class="prediction-box">
+                    <div class="prediction-title">Predicted Package</div>
+                    <div class="prediction-value" style="color: var(--brand-blue);">{{ result.prediction_formatted }}</div>
+                    <div class="prediction-meta">
+                        <strong>CGPA Input:</strong> {{ result.cgpa }}<br>
+                        <strong>Formula:</strong> {{ result.calculation }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- MATHEMATICAL MODEL FORMULATION -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-square-root-variable me-2 text-primary"></i> Model Formulation</h3>
+            </div>
+            <div class="card-body-academic" style="font-size: 0.85rem; color: var(--slate-700);">
+                <p><strong>Fitted Equation:</strong></p>
+                <div style="background: var(--slate-100); padding: 0.6rem 0.8rem; border-radius: 4px; font-family: monospace; font-weight: 600; color: var(--navy-900); margin-bottom: 0.75rem;">
+                    {{ details.equation }}
+                </div>
+                <ul style="padding-left: 1.2rem; margin-bottom: 0.75rem; line-height: 1.6;">
+                    <li><strong>Slope (&beta;₁ / m):</strong> {{ details.slope }} LPA per CGPA point</li>
+                    <li><strong>Intercept (&beta;₀ / c):</strong> {{ details.intercept }} LPA</li>
+                </ul>
+                <p style="color: var(--slate-500); font-size: 0.8rem; margin: 0;">
+                    Optimized by Ordinary Least Squares (OLS) minimizing the residual sum of squares:
+                    &Sigma; (yᵢ - ŷᵢ)².
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: VISUALIZATIONS & PERFORMANCE METRICS -->
+    <div>
+        <!-- MODEL PERFORMANCE METRICS -->
+        <div class="card-academic" style="margin-bottom: 1.5rem;">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-line me-2 text-primary"></i> Model Performance (Scikit-learn Evaluation)</h3>
+                <span class="status-badge"><span class="status-dot"></span> Test Set Split: 20%</span>
+            </div>
+            <div class="card-body-academic">
+                <div class="metrics-row">
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">R² Score (Variance)</div>
+                        <div class="metric-pill-value" style="color: var(--brand-blue);">{{ details.metrics.r2_score }}</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Mean Absolute Error</div>
+                        <div class="metric-pill-value">{{ details.metrics.mae }} LPA</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Mean Squared Error</div>
+                        <div class="metric-pill-value">{{ details.metrics.mse }}</div>
+                    </div>
+                    <div class="metric-pill">
+                        <div class="metric-pill-label">Root Mean Sq Error</div>
+                        <div class="metric-pill-value">{{ details.metrics.rmse }} LPA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISUALIZATION SECTION -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h3><i class="fa-solid fa-chart-area me-2 text-primary"></i> Visualization Section</h3>
+            </div>
+            <div class="card-body-academic">
+                <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 1rem;">
+                    Displays training data points, test observations, and the linear regression line of best fit. 
+                    {% if result %}The green star represents your current query point.{% endif %}
+                </p>
+                <div class="plot-container">
+                    <img src="{{ result.plot if result else details.plot }}" alt="Simple Linear Regression Plot">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

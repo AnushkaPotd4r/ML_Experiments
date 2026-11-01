@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ML Studio | Interactive Machine Learning Algorithms Lab{% endblock %}</title>
+    
+    <!-- Academic Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom Academic Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Chart.js for High-Performance Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>ML STUDIO</h1>
+                    <p>Machine Learning Lab</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Navigation</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard') }}#algorithms-section" class="nav-link">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span>All Algorithms</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dataset_explorer') }}" class="nav-link {% if active_page == 'dataset_explorer' %}active{% endif %}">
+                            <i class="fa-solid fa-database"></i>
+                            <span>Dataset Explorer</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('performance') }}" class="nav-link {% if active_page == 'performance' %}active{% endif %}">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Model Performance</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('about') }}" class="nav-link {% if active_page == 'about' %}active{% endif %}">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>About Project</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="nav-section-title">Regression Models</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_slr') }}" class="nav-link {% if active_page == 'slr' %}active{% endif %}">
+                            <i class="fa-solid fa-chart-simple"></i>
+                            <span>01. Simple Linear Reg.</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_mlr') }}" class="nav-link {% if active_page == 'mlr' %}active{% endif %}">
+                            <i class="fa-solid fa-arrows-split-up-and-left"></i>
+                            <span>02. Multiple Linear Reg.</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="nav-section-title">Classification Models</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_logistic_binary') }}" class="nav-link {% if active_page == 'logistic_binary' %}active{% endif %}">
+                            <i class="fa-solid fa-toggle-on"></i>
+                            <span>03. Binary Logistic</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_logistic_multiclass') }}" class="nav-link {% if active_page == 'logistic_multiclass' %}active{% endif %}">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>04. Multiclass Logistic</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_decision_tree') }}" class="nav-link {% if active_page == 'decision_tree' %}active{% endif %}">
+                            <i class="fa-solid fa-network-wired"></i>
+                            <span>05. Decision Tree</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_knn') }}" class="nav-link {% if active_page == 'knn' %}active{% endif %}">
+                            <i class="fa-solid fa-circle-nodes"></i>
+                            <span>06. K-Nearest Neighbors</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_naive_bayes') }}" class="nav-link {% if active_page == 'naive_bayes' %}active{% endif %}">
+                            <i class="fa-solid fa-square-root-variable"></i>
+                            <span>07. Naive Bayes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_linear_svm') }}" class="nav-link {% if active_page == 'linear_svm' %}active{% endif %}">
+                            <i class="fa-solid fa-arrows-left-right-to-line"></i>
+                            <span>08. Linear SVM</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_nonlinear_svm') }}" class="nav-link {% if active_page == 'nonlinear_svm' %}active{% endif %}">
+                            <i class="fa-solid fa-wave-square"></i>
+                            <span>09. Non-Linear SVM</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('exp_random_forest') }}" class="nav-link {% if active_page == 'random_forest' %}active{% endif %}">
+                            <i class="fa-solid fa-tree"></i>
+                            <span>10. Random Forest</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div>Academic ML Practical Lab</div>
+                <div style="color: var(--slate-400); font-size: 0.7rem; margin-top: 0.2rem;">Python 3.13 • Scikit-learn • Flask</div>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW AREA -->
+        <main class="main-content">
+            <!-- Topbar Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb-nav">
+                        <a href="{{ url_for('dashboard') }}">ML Studio</a>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+                        <span>{% block breadcrumb %}Dashboard{% endblock %}</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <span class="status-badge">
+                        <span class="status-dot"></span>
+                        Backend ML Engine Active
+                    </span>
+                </div>
+            </header>
+
+            <!-- Notification Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div style="padding: 1rem 1.75rem 0 1.75rem;">
+                        {% for category, message in messages %}
+                            <div style="padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 0.75rem; font-size: 0.88rem; 
+                                {% if category == 'error' %}background:#fef2f2; color:#991b1b; border: 1px solid #fecaca;
+                                {% else %}background:#eff6ff; color:#1e40af; border: 1px solid #bfdbfe;{% endif %}">
+                                <i class="fa-solid {% if category == 'error' %}fa-triangle-exclamation{% else %}fa-circle-check{% endif %} me-2"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Dynamic Body Content -->
+            <div class="page-container">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Main Client Script -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

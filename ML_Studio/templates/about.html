@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}About Project | ML Studio{% endblock %}
+{% block breadcrumb %}About Project{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">About ML Studio: Project Architecture & Viva Guide</h1>
+    <p class="page-subtitle">Academic project background, end-to-end architecture, and foundational viva-voce technical questions.</p>
+</div>
+
+<!-- PROJECT OBJECTIVES & ARCHITECTURE CARD -->
+<div class="card-academic" style="margin-bottom: 1.5rem;">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-graduation-cap me-2 text-primary"></i> Project Overview & Academic Objective</h3>
+    </div>
+    <div class="card-body-academic">
+        <p style="font-size: 0.92rem; color: var(--navy-800); line-height: 1.6;">
+            <strong>ML Studio</strong> is an interactive educational machine learning laboratory designed for engineering students and data science practitioners. It aggregates <strong>10 foundational supervised machine learning algorithms</strong> (2 regression models and 8 classification models) into a centralized, responsive dashboard.
+        </p>
+        <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.6;">
+            Every single algorithm runs on top of genuine <strong>Scikit-learn</strong> pipelines with actual train-test partitioning (80/20 or 75/25), automated standard feature scaling to prevent data leakage, metric evaluations (R², MAE, MSE, Accuracy, Precision, Recall, F1, Confusion Matrices), and interactive visualization generation (Matplotlib headless Agg and Chart.js).
+        </p>
+
+        <!-- Tech Stack Badges -->
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
+            <span style="background: #dbeafe; color: #1e40af; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">Python 3.13</span>
+            <span style="background: #e0f2fe; color: #0369a1; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">Flask 3.1</span>
+            <span style="background: #f1f5f9; color: #334155; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">Scikit-learn 1.7</span>
+            <span style="background: #fef3c7; color: #92400e; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">Pandas & NumPy</span>
+            <span style="background: #ede9fe; color: #5b21b6; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">Matplotlib & Seaborn</span>
+            <span style="background: #dcfce7; color: #166534; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">Chart.js Visualizations</span>
+            <span style="background: #f3f4f6; color: #374151; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">SQLite History Database</span>
+        </div>
+    </div>
+</div>
+
+<!-- ARCHITECTURAL PIPELINE TABLE -->
+<div class="card-academic" style="margin-bottom: 1.5rem;">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-diagram-project me-2 text-primary"></i> Algorithm Suite & Task Mapping</h3>
+    </div>
+    <div class="card-body-academic" style="padding: 0; overflow-x: auto;">
+        <table class="table-academic">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Algorithm</th>
+                    <th>Task Category</th>
+                    <th>Scikit-learn Class</th>
+                    <th>Primary Mathematical Concept</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>01</td>
+                    <td style="font-weight: 600;">Simple Linear Regression</td>
+                    <td><span class="category-tag regression" style="margin: 0;">Regression</span></td>
+                    <td><code>LinearRegression()</code></td>
+                    <td>Ordinary Least Squares (OLS) closed-form minimization</td>
+                </tr>
+                <tr>
+                    <td>02</td>
+                    <td style="font-weight: 600;">Multiple Linear Regression</td>
+                    <td><span class="category-tag regression" style="margin: 0;">Regression</span></td>
+                    <td><code>LinearRegression()</code></td>
+                    <td>Multi-dimensional hyperplane & beta coefficient estimation</td>
+                </tr>
+                <tr>
+                    <td>03</td>
+                    <td style="font-weight: 600;">Binary Logistic Regression</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>LogisticRegression()</code></td>
+                    <td>Sigmoid logit mapping & binary cross-entropy loss</td>
+                </tr>
+                <tr>
+                    <td>04</td>
+                    <td style="font-weight: 600;">Multiclass Logistic Regression</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>LogisticRegression(solver='lbfgs')</code></td>
+                    <td>Softmax multinomial probability distribution</td>
+                </tr>
+                <tr>
+                    <td>05</td>
+                    <td style="font-weight: 600;">Decision Tree Classifier</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>DecisionTreeClassifier()</code></td>
+                    <td>Recursive binary partitioning with Gini Impurity & Entropy</td>
+                </tr>
+                <tr>
+                    <td>06</td>
+                    <td style="font-weight: 600;">K-Nearest Neighbors</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>KNeighborsClassifier()</code></td>
+                    <td>Instance-based Minkowski/Euclidean metric voting</td>
+                </tr>
+                <tr>
+                    <td>07</td>
+                    <td style="font-weight: 600;">Gaussian Naive Bayes</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>GaussianNB()</code></td>
+                    <td>Bayes' Theorem with conditional feature independence</td>
+                </tr>
+                <tr>
+                    <td>08</td>
+                    <td style="font-weight: 600;">Linear Support Vector Machine</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>SVC(kernel='linear')</code></td>
+                    <td>Convex quadratic optimization & maximum margin hyperplane</td>
+                </tr>
+                <tr>
+                    <td>09</td>
+                    <td style="font-weight: 600;">Non-Linear Support Vector Machine</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>SVC(kernel='rbf'/'poly')</code></td>
+                    <td>Kernel Trick (RBF / Poly) into infinite-dimensional space</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td style="font-weight: 600;">Random Forest Classifier</td>
+                    <td><span class="category-tag classification" style="margin: 0;">Classification</span></td>
+                    <td><code>RandomForestClassifier()</code></td>
+                    <td>Bootstrap aggregation (Bagging) & random feature subspace</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- VIVA VOCE PREPARATION GUIDE -->
+<div class="card-academic">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-circle-question me-2 text-primary"></i> Viva Voce & Examination Preparation Guide</h3>
+    </div>
+    <div class="card-body-academic">
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <!-- Question 1 -->
+            <div style="border-left: 3px solid var(--brand-blue); padding-left: 1rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.35rem;">
+                    Q1: What is the mathematical difference between Simple and Multiple Linear Regression?
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--slate-700); margin: 0; line-height: 1.5;">
+                    Simple Linear Regression relates one continuous predictor <em>x</em> to target <em>y</em> via <em>y = &beta;₀ + &beta;₁x + &epsilon;</em> (a straight 2D line). Multiple Linear Regression fits a hyperplane across <em>p</em> predictors: <em>y = &beta;₀ + &beta;₁x₁ + &beta;₂x₂ + ... + &beta;<sub>p</sub>x<sub>p</sub> + &epsilon;</em> using vector matrix notation <em>y = X&beta; + &epsilon;</em> solved via normal equations <em>&beta; = (X<sup>T</sup>X)<sup>-1</sup>X<sup>T</sup>y</em>.
+                </p>
+            </div>
+
+            <!-- Question 2 -->
+            <div style="border-left: 3px solid var(--brand-blue); padding-left: 1rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.35rem;">
+                    Q2: Why can't we use standard Linear Regression directly for binary classification?
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--slate-700); margin: 0; line-height: 1.5;">
+                    Linear regression produces unbounded continuous values <em>(&minus;&infin;, +&infin;)</em>, violating the axiomatic probability interval <em>[0, 1]</em>. Furthermore, its squared residual error penalizes highly confident correct predictions arbitrarily, shifting the decision boundary when outliers exist. Logistic regression fixes this by compressing the linear output through the sigmoidal link function <em>&sigma;(z) = 1 / (1 + e<sup>-z</sup>)</em>.
+                </p>
+            </div>
+
+            <!-- Question 3 -->
+            <div style="border-left: 3px solid var(--brand-blue); padding-left: 1rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.35rem;">
+                    Q3: What is the "Kernel Trick" in Non-Linear Support Vector Machines?
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--slate-700); margin: 0; line-height: 1.5;">
+                    The Kernel Trick enables linear algorithms to learn non-linear boundaries by mapping input data into higher-dimensional feature space &Phi;(x) without ever explicitly calculating the coordinates in that space. Instead, the dot product &lang;&Phi;(x), &Phi;(z)&rang; is computed directly in the original space via kernel functions such as the Radial Basis Function (RBF) <em>K(x, z) = exp(-&gamma;||x - z||²)</em>.
+                </p>
+            </div>
+
+            <!-- Question 4 -->
+            <div style="border-left: 3px solid var(--brand-blue); padding-left: 1rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.35rem;">
+                    Q4: How does Random Forest resolve the high-variance limitation of individual Decision Trees?
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--slate-700); margin: 0; line-height: 1.5;">
+                    Single deep decision trees suffer from high variance (overfitting). Random Forest resolves this via <strong>Bagging (Bootstrap Aggregation)</strong>: it creates <em>B</em> bootstrapped datasets and introduces <strong>feature randomness</strong> by selecting a random subset of &radic;p features at each candidate split. Averaging predictions across these decorrelated trees dramatically reduces overall variance while preserving low bias.
+                </p>
+            </div>
+
+            <!-- Question 5 -->
+            <div style="border-left: 3px solid var(--brand-blue); padding-left: 1rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.35rem;">
+                    Q5: Why is Feature Scaling essential for KNN and SVM, but not for Decision Trees?
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--slate-700); margin: 0; line-height: 1.5;">
+                    KNN and SVM rely on geometric distance metrics (Euclidean distance or margin width). Features with large raw scales (e.g., IQ: 100) will overpower features with small ranges (e.g., CGPA: 8.0) unless standardized with StandardScaler. In contrast, Decision Trees evaluate splits on individual features monotonically one at a time, making them scale-invariant.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

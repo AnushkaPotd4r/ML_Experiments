@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Dataset Explorer | ML Studio{% endblock %}
+{% block breadcrumb %}Dataset Explorer{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 class="page-title">Dataset Explorer & Dynamic Model Trainer</h1>
+        <p class="page-subtitle">Inspect preloaded datasets or upload custom CSV datasets, analyze descriptive summary statistics, and train Scikit-learn algorithms on demand.</p>
+    </div>
+</div>
+
+<!-- Dataset Selector & Uploader Row -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+    <!-- Preloaded Datasets -->
+    <div class="card-academic">
+        <div class="card-header-academic">
+            <h3><i class="fa-solid fa-folder-open me-2 text-primary"></i> Preloaded Sample Datasets</h3>
+        </div>
+        <div class="card-body-academic">
+            <form action="{{ url_for('dataset_explorer') }}" method="GET">
+                <div class="form-group">
+                    <label for="dataset_select" class="form-label">Select Demonstration Dataset</label>
+                    <select name="file" id="dataset_select" class="form-select-academic" onchange="this.form.submit();">
+                        {% for f in available_datasets %}
+                        <option value="{{ f }}" {% if f == selected_filename %}selected{% endif %}>{{ f }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+            <div style="font-size: 0.8rem; color: var(--slate-600);">
+                Currently analyzing: <strong>{{ selected_filename }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Custom CSV -->
+    <div class="card-academic">
+        <div class="card-header-academic">
+            <h3><i class="fa-solid fa-file-arrow-up me-2 text-primary"></i> Upload Custom CSV Dataset</h3>
+        </div>
+        <div class="card-body-academic">
+            <form action="{{ url_for('upload_dataset') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="csv_file" class="form-label">Upload CSV File</label>
+                    <input type="file" name="csv_file" id="csv_file" class="form-control-academic" accept=".csv" required>
+                    <div class="form-hint">Accepted format: standard comma-separated values (.csv)</div>
+                </div>
+                <button type="submit" class="btn-academic btn-primary-academic" style="padding: 0.45rem 1rem;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload and Analyze
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset Metadata & Missing Values Overview -->
+<div class="stats-grid" style="margin-bottom: 1.5rem;">
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>Total Rows</p>
+            <h3>{{ dataset_info.rows }}</h3>
+        </div>
+        <div class="stat-icon primary"><i class="fa-solid fa-table-cells-large"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>Total Columns</p>
+            <h3>{{ dataset_info.columns_count }}</h3>
+        </div>
+        <div class="stat-icon success"><i class="fa-solid fa-table-columns"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>Missing Values</p>
+            <h3 style="color: {% if dataset_info.total_missing > 0 %}var(--danger){% else %}var(--success){% endif %};">
+                {{ dataset_info.total_missing }}
+            </h3>
+        </div>
+        <div class="stat-icon amber"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <p>Numeric Features</p>
+            <h3>{{ dataset_info.numeric_columns|length }}</h3>
+        </div>
+        <div class="stat-icon purple"><i class="fa-solid fa-hashtag"></i></div>
+    </div>
+</div>
+
+<!-- Dataset Preview Table -->
+<div class="card-academic" style="margin-bottom: 1.5rem;">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-table me-2 text-primary"></i> Dataset Preview (First 15 Observations)</h3>
+        <span style="font-size: 0.8rem; color: var(--slate-500);">Displaying {{ dataset_info.preview|length }} rows</span>
+    </div>
+    <div class="card-body-academic" style="padding: 0; overflow-x: auto;">
+        <table class="table-academic">
+            <thead>
+                <tr>
+                    <th style="width: 45px;">#</th>
+                    {% for col in dataset_info.columns %}
+                    <th>
+                        {{ col }}
+                        <div style="font-size: 0.68rem; font-weight: normal; color: var(--slate-500); text-transform: lowercase;">
+                            {{ dataset_info.dtypes[col] }}
+                        </div>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in dataset_info.preview %}
+                <tr>
+                    <td style="color: var(--slate-400); font-weight: 600;">{{ loop.index }}</td>
+                    {% for col in dataset_info.columns %}
+                    <td>{{ row[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Statistical Summary Table -->
+<div class="card-academic" style="margin-bottom: 1.5rem;">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-calculator me-2 text-primary"></i> Descriptive Statistics (Five-Number Summary)</h3>
+    </div>
+    <div class="card-body-academic" style="padding: 0; overflow-x: auto;">
+        {% if dataset_info.statistics %}
+        <table class="table-academic">
+            <thead>
+                <tr>
+                    <th>Stat Metric</th>
+                    {% for col in dataset_info.numeric_columns %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max'] %}
+                <tr>
+                    <td style="font-weight: 600; text-transform: uppercase; font-size: 0.75rem; color: var(--slate-600);">
+                        {{ stat }}
+                    </td>
+                    {% for col in dataset_info.numeric_columns %}
+                    <td>{{ dataset_info.statistics[col][stat]|round(3) if dataset_info.statistics[col][stat] is defined else 'N/A' }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="padding: 1.5rem; text-align: center; color: var(--slate-500);">No numeric columns available for statistical summary.</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- DYNAMIC MODEL TRAINER SECTION -->
+<div class="card-academic">
+    <div class="card-header-academic">
+        <h3><i class="fa-solid fa-graduation-cap me-2 text-primary"></i> Train Algorithm on this Dataset</h3>
+        <span class="status-badge"><span class="status-dot"></span> Train-Test Split: 80% / 20%</span>
+    </div>
+    <div class="card-body-academic">
+        <form action="{{ url_for('train_custom_dataset') }}" method="POST">
+            <input type="hidden" name="dataset_file" value="{{ selected_filename }}">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+                <div>
+                    <label for="target_col" class="form-label">Select Target Variable (Y)</label>
+                    <select name="target_col" id="target_col" class="form-select-academic" required>
+                        {% for col in dataset_info.columns %}
+                        <option value="{{ col }}">{{ col }} ({{ dataset_info.dtypes[col] }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="algo_choice" class="form-label">Select Scikit-learn Algorithm</label>
+                    <select name="algo_choice" id="algo_choice" class="form-select-academic" required>
+                        <option value="linear_regression">Linear Regression (Continuous Target)</option>
+                        <option value="logistic_regression">Logistic Regression (Classification Target)</option>
+                        <option value="decision_tree">Decision Tree Classifier</option>
+                        <option value="random_forest">Random Forest Classifier</option>
+                        <option value="knn">K-Nearest Neighbors Classifier</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Select Input Features (X) — Choose at least 1 feature:</label>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; background: var(--slate-50); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                    {% for col in dataset_info.numeric_columns %}
+                    <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--navy-900); cursor: pointer;">
+                        <input type="checkbox" name="feature_cols" value="{{ col }}" checked>
+                        <span>{{ col }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn-academic btn-primary-academic" style="padding: 0.6rem 1.2rem;">
+                <i class="fa-solid fa-play"></i> Train & Evaluate Model
+            </button>
+        </form>
+
+        <!-- DYNAMIC TRAINING RESULTS -->
+        {% if train_result %}
+        <div style="margin-top: 1.5rem; background: var(--slate-50); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+                <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-900); margin: 0;">
+                    <i class="fa-solid fa-circle-check text-success me-2"></i> Training Completed: {{ train_result.algorithm_name }}
+                </h4>
+                <span class="category-tag {% if train_result.task_type == 'Regression' %}regression{% else %}classification{% endif %}" style="margin: 0;">
+                    {{ train_result.task_type }}
+                </span>
+            </div>
+
+            <div class="metrics-row" style="margin-bottom: 0;">
+                {% if train_result.task_type == 'Regression' %}
+                <div class="metric-pill">
+                    <div class="metric-pill-label">R² Score</div>
+                    <div class="metric-pill-value" style="color: var(--brand-blue);">{{ train_result.metrics.r2_score }}</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-pill-label">MAE</div>
+                    <div class="metric-pill-value">{{ train_result.metrics.mae }}</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-pill-label">MSE</div>
+                    <div class="metric-pill-value">{{ train_result.metrics.mse }}</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-pill-label">RMSE</div>
+                    <div class="metric-pill-value">{{ train_result.metrics.rmse }}</div>
+                </div>
+                {% else %}
+                <div class="metric-pill">
+                    <div class="metric-pill-label">Accuracy</div>
+                    <div class="metric-pill-value" style="color: var(--brand-blue);">{{ (train_result.metrics.accuracy * 100)|round(1) }}%</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-pill-label">Precision</div>
+                    <div class="metric-pill-value">{{ (train_result.metrics.precision * 100)|round(1) }}%</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-pill-label">Recall</div>
+                    <div class="metric-pill-value">{{ (train_result.metrics.recall * 100)|round(1) }}%</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-pill-label">F1-Score</div>
+                    <div class="metric-pill-value">{{ train_result.metrics.f1_score }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
